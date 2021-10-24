@@ -1,0 +1,49 @@
+version: '3.8'
+services:
+  php:
+    image: app-php
+    restart: 'always'
+    container_name: php
+    environment:
+      - "TZ=Europe/Budapest"
+      - "APP_ENV=dev"
+    volumes:
+      - uploads:/var/www/html/public/uploads
+
+  php-migrate:
+    image: app-php
+    restart: 'no'
+    depends_on:
+      - database
+    environment:
+      - "TZ=Europe/Budapest"
+      - "APP_ENV=dev"
+    command: ["php", "bin/console", "do:mi:mi", "-n"]
+
+  nginx:
+    image: app-nginx
+    restart: 'always'
+    container_name: nginx
+    environment:
+      - "TZ=Europe/Budapest"
+    volumes:
+      - uploads:/var/www/html/public/uploads
+    ports:
+      - "8080:80"
+
+  database:
+    image: mariadb
+    restart: 'always'
+    ports:
+      - "3306:3306"
+    volumes:
+      - db:/var/lib/mysql/"
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: app
+      MYSQL_USER: app
+      MYSQL_PASSWORD: app
+
+volumes:
+  uploads:
+  db:
