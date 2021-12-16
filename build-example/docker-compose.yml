@@ -1,33 +1,13 @@
 version: '3.8'
 services:
-  php:
-    image: app-php
-    restart: 'always'
-    container_name: php
-    environment:
-      - "TZ=Europe/Budapest"
-      - "APP_ENV=dev"
-    volumes:
-      - uploads:/var/www/html/public/uploads
-
-  php-migrate:
-    image: app-php
-    restart: 'no'
-    depends_on:
-      - database
-    environment:
-      - "TZ=Europe/Budapest"
-      - "APP_ENV=dev"
-    command: ["php", "bin/console", "do:mi:mi", "-n"]
-
   nginx:
-    image: app-nginx
+    image: fps-all-on-one:latest
     restart: 'always'
-    container_name: nginx
+    container_name: aio
     environment:
       - "TZ=Europe/Budapest"
     volumes:
-      - uploads:/var/www/html/public/uploads
+      - ./:/var/www/html/
     ports:
       - "8080:80"
 
