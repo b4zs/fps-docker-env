@@ -1,7 +1,9 @@
 .DS_Store
 .idea
 build-example/app-code/html
-web-php/demo/var/mysql_data
-!web-php/demo/var/mysql_data/.gitkeep
-web-php/demo/var/mysql_log
-!web-php/demo/var/mysql_log/.gitkeep
+web-php/demo-project/var/mysql_data
+!web-php/demo-project/var/mysql_data/.gitkeep
+web-php/demo-project/var/mysql_log
+!web-php/demo-project/var/mysql_log/.gitkeep
+tools/var/mysql_data/*
+tools/var/mysql_log/*

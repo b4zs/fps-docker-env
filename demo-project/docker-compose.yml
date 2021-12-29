@@ -1,0 +1,22 @@
+version: '3'
+
+services:
+  web:
+    image: fps-web-php
+    volumes:
+      - ./web:/www:delegated
+    environment:
+      - "TZ=Europe/Budapest"
+    expose: [80]
+    labels:
+      - "traefik.enable=true"
+      - "traefik.subdomain=demo"
+    networks:
+      - dev_database
+      - dev_proxy
+
+networks:
+  dev_database:
+    external: true
+  dev_proxy:
+    external: true
