@@ -2,7 +2,7 @@ version: '3'
 
 services:
   web:
-    image: fps-web-php
+    image: b4zs/fps-web-php
     volumes:
       - ./web:/www:delegated
     environment:

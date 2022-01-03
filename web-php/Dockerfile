@@ -7,6 +7,7 @@ FROM php:${PHP_VERSION}-fpm-alpine as base
 RUN  --mount=type=cache,target=/var/cache/apt\
     apk --update add git $PHPIZE_DEPS
 RUN docker-php-ext-install pdo_mysql
+RUN docker-php-ext-install mysqli
 RUN docker-php-ext-install opcache
 RUN docker-php-ext-install exif
 
@@ -14,6 +15,7 @@ RUN docker-php-ext-install exif
 # gd + intl
 RUN  --mount=type=cache,target=/var/cache/apt \
      apk add  \
+      icu \
       icu-dev \
       freetype \
       libjpeg-turbo \
@@ -35,7 +37,7 @@ RUN  --mount=type=cache,target=/var/cache/apt \
     && rm -rf /tmp/*
 
 
-#RUN pecl install xdebug && docker-php-ext-enable xdebug
+RUN pecl install xdebug && docker-php-ext-enable xdebug
 
 RUN docker-php-source delete
 RUN apk del $PHPIZE_DEPS
@@ -75,4 +77,4 @@ COPY --from=node /usr/local/bin /usr/local/bin
 WORKDIR /www
 CMD ["/init"]
 EXPOSE 80 443
-HEALTHCHECK --interval=60s --timeout=5s CMD curl -f http://127.0.0.1/ || exit 1
+#HEALTHCHECK --interval=60s --timeout=5s CMD curl -f http://127.0.0.1/ || exit 1
