@@ -1,4 +1,5 @@
 ARG PHP_VERSION
+ARG NODE_VERSION
 
 FROM php:${PHP_VERSION}-fpm-alpine as base
 
@@ -58,13 +59,21 @@ RUN  --mount=type=cache,target=/var/cache/apt \
     && rm -rf /etc/nginx/conf.d/* /etc/php8/conf.d/* /etc/php8/php-fpm.d/*
 
 
+FROM node:${NODE_VERSION}-alpine AS node
+
 FROM php:${PHP_VERSION}-fpm-alpine
 
 COPY --from=base / /
 
 COPY files/nginx files/php8 /
 
+COPY --from=node /usr/lib /usr/lib
+COPY --from=node /usr/local/share /usr/local/share
+COPY --from=node /usr/local/lib /usr/local/lib
+COPY --from=node /usr/local/include /usr/local/include
+COPY --from=node /usr/local/bin /usr/local/bin
+
 WORKDIR /www
 CMD ["/init"]
 EXPOSE 80 443
-HEALTHCHECK --interval=60s --timeout=5s CMD curl -f http://127.0.0.1/php-fpm-ping || exit 1
+HEALTHCHECK --interval=60s --timeout=5s CMD curl -f http://127.0.0.1/ || exit 1
