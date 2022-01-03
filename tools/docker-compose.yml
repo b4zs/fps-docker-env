@@ -1,0 +1,72 @@
+version: '3'
+
+services:
+  db:
+    image: mariadb:latest
+    environment:
+      - MYSQL_DATABASE=${DATABASE_NAME}
+      - MYSQL_USER=${DATABASE_USER}
+      - MYSQL_PASSWORD=${DATABASE_PASSWORD}
+      - MYSQL_ROOT_PASSWORD=${DATABASE_ROOT_PASSWORD}
+    volumes:
+      - ./var/mysql_data:/var/lib/mysql:delegated
+      - ./var/mysql_log:/var/log/mysql:delegated
+    networks:
+      - dev_database
+
+  traefik:
+    image: "traefik:v2.5"
+    container_name: "traefik"
+    command:
+      - "--log.level=DEBUG"
+      - "--api.insecure=true"
+      - "--providers.docker=true"
+      - "--providers.docker.swarmMode=${USE_SWARM}"
+      - "--providers.docker.exposedbydefault=false"
+      - '--providers.docker.defaultRule=Host(`{{ index .Labels "traefik.subdomain" }}.dev2`)'
+      - "--entrypoints.web.address=:80"
+      #- "--entrypoints.web-secure.address=:443"
+    ports:
+#      - "80:80"
+#      - "443:443"
+#      - "8080:8080"
+      - "52080:80"
+      - "52443:443"
+      - "52090:8080"
+    volumes:
+      - "/var/run/docker.sock:/var/run/docker.sock:ro"
+    restart: unless-stopped
+    networks:
+      - dev_proxy
+
+  whoami:
+    image: "traefik/whoami"
+    labels:
+      - "traefik.enable=true"
+      - "traefik.subdomain=whoami"
+    networks:
+      - dev_proxy
+
+  phpmyadmin:
+    image: "phpmyadmin"
+    labels:
+      - "traefik.enable=true"
+      - "traefik.subdomain=phpmyadmin"
+    environment:
+      - PMA_ARBITRARY=0
+      - PMA_HOST=db
+      - PMA_USER=root
+      - PMA_PASSWORD=${DATABASE_ROOT_PASSWORD}
+    expose:
+      - 80
+    networks:
+      - dev_database
+      - dev_proxy
+
+
+
+networks:
+  dev_database:
+    external: true
+  dev_proxy:
+    external: true

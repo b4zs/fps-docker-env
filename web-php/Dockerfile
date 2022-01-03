@@ -11,7 +11,6 @@ RUN docker-php-ext-install opcache
 RUN docker-php-ext-install exif
 
 
-
 # gd + intl
 RUN  --mount=type=cache,target=/var/cache/apt \
      apk add  \
