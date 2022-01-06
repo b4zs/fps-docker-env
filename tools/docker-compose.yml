@@ -12,10 +12,8 @@ services:
     volumes:
       - ./var/mysql_data:/var/lib/mysql:delegated
       - ./var/mysql_log:/var/log/mysql:delegated
-    expose:
-      - 3306
     ports:
-      - "3306:3306"
+      - "127.0.0.1:3306:3306"
     networks:
       - dev
 
@@ -31,23 +29,12 @@ services:
       - "--entrypoints.web.address=:80"
       #- "--entrypoints.web-secure.address=:443"
     ports:
-#      - "80:80"
-#      - "443:443"
-#      - "8080:8080"
       - "${PORT_HTTP}:80"
       - "${PORT_HTTPS}:443"
       - "${PORT_MANAGEMENT}:8080"
     volumes:
       - "/var/run/docker.sock:/var/run/docker.sock:ro"
     restart: unless-stopped
-    networks:
-      - dev
-
-  whoami:
-    image: "traefik/whoami"
-    labels:
-      - "traefik.enable=true"
-      - "traefik.subdomain=whoami"
     networks:
       - dev
 
@@ -65,8 +52,10 @@ services:
       - 80
     networks:
       - dev
+    links:
+      - db
 
 
 
 networks:
-  dev: { external: true }
+  dev: { name: dev }

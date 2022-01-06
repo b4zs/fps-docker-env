@@ -2,21 +2,20 @@ version: '3'
 
 services:
   web:
-    image: b4zs/fps-web-php
+    image: b4zs/fps-web:php8.0-node12
     volumes:
       - ./web:/www:delegated
+      - ${CACHE_ROOT}/.composer:/root/.composer
+      - ${CACHE_ROOT}/.npm:/root/.npm
     environment:
       - "TZ=Europe/Budapest"
-    expose: [80]
     labels:
       - "traefik.enable=true"
       - "traefik.subdomain=demo"
+      #- "traefik.http.routers.web-demo-project.tls=true"
     networks:
-      - dev_database
-      - dev_proxy
+      - dev
 
 networks:
-  dev_database:
-    external: true
-  dev_proxy:
+  dev:
     external: true

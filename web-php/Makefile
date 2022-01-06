@@ -5,7 +5,7 @@ IMAGE_NAME=${NAMESPACE}/fps-web:php${PHP_VERSION}-node${NODE_VERSION}
 
 build-and-push80:
 	make build80
-	make push80
+	make push800
 
 build80:
 	make build-image PHP_VERSION=8.0 NODE_VERSION=12
